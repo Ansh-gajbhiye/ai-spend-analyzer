@@ -4,5 +4,5 @@ import { handleUpload } from "../controllers/uploadController.js";
 
 const router = Router();
 
-router.post ('/', upload.single('file'), handleUpload);
-export default Router;
+router.post ('/', upload.single('statement'), handleUpload);
+export default router;
