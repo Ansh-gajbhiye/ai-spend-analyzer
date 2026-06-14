@@ -3,8 +3,11 @@ import multer from "multer";
 import cors from "cors";
 import fs from "fs";
 import csvParser from "csv-parser";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import User from "./models/User";
+import Transaction from "./models/Transaction";
 
 
 dotenv.config();
@@ -16,6 +19,9 @@ const port = 3000;
 app.use(express.json()); 
 app.use(cors());
 
+mongoose.connect(process.env.MONGODB_URI)
+.then(() => console.log(" MongoDB Connected!"))
+.catch((err)=> console.error(" MongoDB Connection Error:", err))
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
