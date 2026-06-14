@@ -6,8 +6,10 @@ import csvParser from "csv-parser";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import User from "./models/User";
-import Transaction from "./models/Transaction";
+import bcrypt from "bcrypt";
+import User from "./models/User.js";
+import Transaction from "./models/Transaction.js";
+import jwt from "jsonwebtoken";
 
 
 dotenv.config();
@@ -23,6 +25,67 @@ mongoose.connect(process.env.MONGODB_URI)
 .then(() => console.log(" MongoDB Connected!"))
 .catch((err)=> console.error(" MongoDB Connection Error:", err))
 
+// --- register route  ---
+app.post("/api/register",async (req, res)=>{
+try {
+    const {email, password} =req.body;
+    //Check if user exists
+    const existingUser = await User.findOne({email : email});
+    if(existingUser){
+        return res.status(400).json({error: "email already in use"})
+    }
+    // Encrypt the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    // Save the new user
+    const newUser = new User({ 
+      email: email, 
+      password: hashedPassword 
+    });
+    await newUser.save();
+
+  // Send a simple success message (NO token here)
+    res.status(201).json({ message: "User registered successfully!" });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error during registration." });
+  }
+});
+
+// --- login route  ---
+app.post("/api/login", async (req, res)=>{
+    try {
+        const {email, password} =req.body;
+        // Check the Guest List
+        const user = await User.findOne({email:email});
+        if(!user){
+            return res.status(400).json({error:"User not found"})};
+        // Verify the Password 
+        const validPassword = await bcrypt.compare(password, user.password);
+
+    if (!validPassword) {
+      return res.status(400).json({ error: "Invalid password." });
+    } 
+    // Print the VIP Wristband
+    const token = jwt.sign(
+      { id: user._id }, 
+      process.env.MONGODB_URI, 
+      { expiresIn: "24h" }
+    );
+    //Send a res.json() back to the user
+    res.json({ 
+      message: "Logged in successfully!", 
+      token: token, 
+      userId: user._id 
+    });
+    
+    } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error during login." });
+        
+    }
+})
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const storage = multer.diskStorage({
