@@ -10,6 +10,7 @@ import bcrypt from "bcrypt";
 import User from "./models/User.js";
 import Transaction from "./models/Transaction.js";
 import jwt from "jsonwebtoken";
+import authMiddleware from "./middleware/auth.js";
 
 
 dotenv.config();
@@ -70,7 +71,7 @@ app.post("/api/login", async (req, res)=>{
     // Print the VIP Wristband
     const token = jwt.sign(
       { id: user._id }, 
-      process.env.MONGODB_URI, 
+      process.env.JWT_SECRET, 
       { expiresIn: "24h" }
     );
     //Send a res.json() back to the user
@@ -93,6 +94,44 @@ const storage = multer.diskStorage({
     filename: (req, file, cb) => cb(null, file.originalname)
 });
 const upload = multer({ storage });
+
+//authMiddleware
+app.post('/api/upload', authMiddleware, upload.single('statement'), async (req, res) => {
+    if (!req.file) return res.status(400).json({ error: "No file uploaded." });
+    
+    const results = [];
+    fs.createReadStream(req.file.path)
+        .pipe(csvParser())
+        .on('data', (data) => results.push(data))
+        .on('end', async () => {
+            // Delete the temporary file
+            fs.unlinkSync(req.file.path);
+            
+            try {
+   
+            const formattedTransactions = results.map((row) => {
+                return {
+                    userId: req.user.id,
+                    date: row.Date || row.date, 
+                    description: row.Description || row.description || row.Narration, 
+                    amount: Number(row.Amount || row.amount) 
+                };
+            });
+
+           
+            await Transaction.insertMany(formattedTransactions);
+
+           
+            res.json({ 
+                message: 'Success! Transactions securely saved to your account.', 
+                count: formattedTransactions.length 
+            });
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: "Failed to save transactions to database." });
+            }
+        });
+});
 
 app.post('/api/upload', upload.single('statement'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: "No file uploaded." });
