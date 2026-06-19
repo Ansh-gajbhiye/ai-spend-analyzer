@@ -124,25 +124,13 @@ app.post('/api/upload', authMiddleware, upload.single('statement'), async (req, 
            
             res.json({ 
                 message: 'Success! Transactions securely saved to your account.', 
-                count: formattedTransactions.length 
+                count: formattedTransactions.length ,
+                data: formattedTransactions
             });
             } catch (error) {
                 console.error(error);
                 res.status(500).json({ error: "Failed to save transactions to database." });
             }
-        });
-});
-
-app.post('/api/upload', upload.single('statement'), (req, res) => {
-    if (!req.file) return res.status(400).json({ error: "No file uploaded." });
-    
-    const results = [];
-    fs.createReadStream(req.file.path)
-        .pipe(csvParser())
-        .on('data', (data) => results.push(data))
-        .on('end', () => {
-            fs.unlinkSync(req.file.path);
-            res.json({ message: 'Success', data: results });
         });
 });
 
