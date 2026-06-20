@@ -21,7 +21,6 @@ function Login({ onLoginSuccess }) {
       const data = await response.json()
 
       if (response.ok) {
-        // Success! Pass the token back to App.jsx
         onLoginSuccess(data.token) 
       } else {
         setError(data.error || 'Login failed')
@@ -32,30 +31,44 @@ function Login({ onLoginSuccess }) {
   }
 
   return (
-    <div style={{ border: '1px solid #ccc', padding: '20px', maxWidth: '300px' }}>
-      <h2>Login</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-100">
+      <h2 className="text-3xl font-extrabold text-gray-900 mb-6 text-center">Welcome Back</h2>
       
-      <form onSubmit={handleLogin}>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Email:</label><br />
+      {error && (
+        <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm font-medium border border-red-100">
+          {error}
+        </div>
+      )}
+      
+      <form onSubmit={handleLogin} className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
           <input 
             type="email" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
             required 
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
           />
         </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Password:</label><br />
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
           <input 
             type="password" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
             required 
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
           />
         </div>
-        <button type="submit">Enter Vault</button>
+        
+        <button 
+          type="submit"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors duration-200"
+        >
+          Enter Vault
+        </button>
       </form>
     </div>
   )
