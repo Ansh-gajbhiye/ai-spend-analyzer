@@ -16,7 +16,8 @@ import authMiddleware from "./middleware/auth.js";
 dotenv.config();
 
 const app = express();
-const port = 3000;
+// Using process.env.PORT is required for live servers like Render
+const port = process.env.PORT || 3000;
 
 
 app.use(express.json()); 
@@ -87,7 +88,14 @@ app.post("/api/login", async (req, res)=>{
         
     }
 })
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+// --- ADDED FIX: Auto-create uploads directory so Render doesn't crash ---
+if (!fs.existsSync('uploads')) {
+    fs.mkdirSync('uploads');
+}
+// ------------------------------------------------------------------------
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'uploads/'),
