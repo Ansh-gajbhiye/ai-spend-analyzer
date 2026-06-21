@@ -1,4 +1,4 @@
-# AI Spend Analyzer 📊🤖
+# AI Spend Analyzer 
 
 **Live Demo:** [View Application](https://ai-spend-analyzer-95mu9j05j-ansh-s-projects-54e1ec7d.vercel.app/)
 
@@ -7,20 +7,20 @@ AI Spend Analyzer is a full-stack financial dashboard designed to ingest raw ban
 ![AI Spend Analyzer Dashboard](./dashboard-preview.png)
 *(Note: Replace this image with a screenshot of your live dashboard)*
 
-## 🚀 Features
+##  Features
 * **Automated Data Parsing:** Upload raw CSV bank statements and automatically convert them into structured MongoDB schemas.
 * **Dynamic Dashboard:** Real-time data visualization including Revenue Flow (Bar Charts) and Expense Splits (Donut Charts).
 * **AI Financial Auditor:** Integrates with Google's Gemini AI to analyze transaction history, flag unusual spending patterns, and generate targeted, context-aware questions about specific purchases.
 * **Secure Authentication:** JWT-based user authentication with encrypted passwords via bcrypt.
 
-## 💻 Tech Stack
+##  Tech Stack
 * **Frontend:** React, Vite, Tailwind CSS, Recharts
 * **Backend:** Node.js, Express.js, Multer (File Handling)
 * **Database:** MongoDB, Mongoose
 * **AI Integration:** Google Generative AI (Gemini 3.5 Flash)
 * **Deployment:** Vercel (Client) & Render (Server)
 
-## 🛠️ Local Installation
+##  Local Installation
 
 **1. Clone the repository**
 \`\`\`bash
