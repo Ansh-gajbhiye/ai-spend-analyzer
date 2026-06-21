@@ -1,50 +1,59 @@
-# 💸 AI Spend Analyzer
+# AI Spend Analyzer 📊🤖
 
-**Turn raw bank statements into actionable financial insights — with a side of AI-powered roasting.**
+**Live Demo:** [View Application](https://ai-spend-analyzer-95mu9j05j-ansh-s-projects-54e1ec7d.vercel.app/)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org/)
-[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)](https://react.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-7-47A248?logo=mongodb)](https://www.mongodb.com/)
+AI Spend Analyzer is a full-stack financial dashboard designed to ingest raw bank statements, aggregate financial data, and utilize artificial intelligence to act as a personal financial auditor. It automatically visualizes income/expense flows and flags suspicious or unusual transactions using the Gemini LLM.
 
-A full-stack MERN application that ingests your monthly bank statement (CSV), visualizes your spending with interactive charts, and then uses **Google Gemini** to either **roast your financial decisions** or **give you a solid budget plan**.
+![AI Spend Analyzer Dashboard](./dashboard-preview.png)
+*(Note: Replace this image with a screenshot of your live dashboard)*
 
----
+## 🚀 Features
+* **Automated Data Parsing:** Upload raw CSV bank statements and automatically convert them into structured MongoDB schemas.
+* **Dynamic Dashboard:** Real-time data visualization including Revenue Flow (Bar Charts) and Expense Splits (Donut Charts).
+* **AI Financial Auditor:** Integrates with Google's Gemini AI to analyze transaction history, flag unusual spending patterns, and generate targeted, context-aware questions about specific purchases.
+* **Secure Authentication:** JWT-based user authentication with encrypted passwords via bcrypt.
 
-## 🎯 Why this project exists
+## 💻 Tech Stack
+* **Frontend:** React, Vite, Tailwind CSS, Recharts
+* **Backend:** Node.js, Express.js, Multer (File Handling)
+* **Database:** MongoDB, Mongoose
+* **AI Integration:** Google Generative AI (Gemini 3.5 Flash)
+* **Deployment:** Vercel (Client) & Render (Server)
 
-Most personal finance apps are boring. this project is teaching you where your money really goes. 
+## 🛠️ Local Installation
 
-- File upload + CSV parsing
-- Data cleaning & categorization
-- Dynamic dashboard with charts
-- External AI API orchestration
-- Clean, maintainable architecture
+**1. Clone the repository**
+\`\`\`bash
+git clone https://github.com/your-username/ai-spend-analyzer.git
+\`\`\`
 
----
+**2. Setup the Backend**
+\`\`\`bash
+cd server
+npm install
+\`\`\`
+Create a `.env` file in the `server` directory and add:
+\`\`\`env
+PORT=3000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+GEMINI_API_KEY=your_google_gemini_api_key
+\`\`\`
+Start the server:
+\`\`\`bash
+npm start
+\`\`\`
 
-## 🧑‍💻 User journey
-
-1. **Upload** – Drag & drop your bank CSV file.
-2. **See** – Instantly view a breakdown of your spending by category (pie chart, bar graph).
-3. **Roast or Advice** – Click one of two buttons:
-   - 🔥 **Roast Me** – Gemini tears your spending habits apart with savage humor.
-   - 📊 **Better Advice** – Gemini gives a structured, multi-step plan to save 10% more next month.
-
----
-
-## 🛠️ Tech stack
-
-| Layer       | Technology                          |
-|-------------|-------------------------------------|
-| Frontend    | React (Vite), Tailwind CSS, Recharts, Axios |
-| Backend     | Node.js, Express                    |
-| Database    | MongoDB (Mongoose)                  |
-| AI          | Google Gemini API                   |
-| File Upload | Multer + csv-parser                 |
-| Auth        | (optional) JWT + bcrypt             |
-
----
-
-## 📁 Project structure
+**3. Setup the Frontend**
+\`\`\`bash
+cd ../client
+npm install
+\`\`\`
+Create a `.env` file in the `client` directory and add:
+\`\`\`env
+VITE_API_URL=http://localhost:3000
+\`\`\`
+Start the development server:
+\`\`\`bash
+npm run dev
+\`\`\`
