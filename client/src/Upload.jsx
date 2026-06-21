@@ -22,7 +22,7 @@ function Upload({ token }) {
     formData.append('statement', file);
 
     try {
-      const response = await fetch('http://localhost:3000/api/upload', {
+     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData,
@@ -45,7 +45,7 @@ function Upload({ token }) {
   const runAIAnalysis = async () => {
     setAnalyzing(true);
     try {
-      const response = await fetch('http://localhost:3000/api/analyze', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', 
