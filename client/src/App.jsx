@@ -29,7 +29,7 @@ function App() {
           <aside className="w-64 bg-slate-950 border-r border-slate-800 flex flex-col justify-between hidden md:flex">
             <div className="p-6">
               <h1 className="text-2xl font-bold text-white mb-10 tracking-tight">
-                Remark<span className="text-blue-500">Flow</span>
+                ai-spend<span className="text-blue-500">analyzer</span>
               </h1>
               
               <nav className="space-y-3">
