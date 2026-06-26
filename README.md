@@ -24,7 +24,7 @@ AI Spend Analyzer is a full-stack financial dashboard designed to ingest raw ban
 
 **1. Clone the repository**
 \`\`\`bash
-[git clone https://github.com/your-username/ai-spend-analyzer.git](https://github.com/Ansh-gajbhiye/ai-spend-analyzer.git)
+https://github.com/Ansh-gajbhiye/ai-spend-analyzer.git
 \`\`\`
 
 **2. Setup the Backend**
