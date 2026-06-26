@@ -4,7 +4,7 @@
 
 AI Spend Analyzer is a full-stack financial dashboard designed to ingest raw bank statements, aggregate financial data, and utilize artificial intelligence to act as a personal financial auditor. It automatically visualizes income/expense flows and flags suspicious or unusual transactions using the Gemini LLM.
 
-![AI Spend Analyzer Dashboard](./dashboard-preview.png)
+![AI Spend Analyzer Dashboard](./client/photos/image.png)
 
 
 ##  Features
