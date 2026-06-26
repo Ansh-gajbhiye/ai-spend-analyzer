@@ -1,6 +1,6 @@
 # AI Spend Analyzer 
 
-**Live Demo:** [View Application](https://ai-spend-analyzer-95mu9j05j-ansh-s-projects-54e1ec7d.vercel.app/)
+**Live Demo:** [View Application](https://ai-spend-analyzer.vercel.app/)
 
 AI Spend Analyzer is a full-stack financial dashboard designed to ingest raw bank statements, aggregate financial data, and utilize artificial intelligence to act as a personal financial auditor. It automatically visualizes income/expense flows and flags suspicious or unusual transactions using the Gemini LLM.
 
