@@ -74,12 +74,11 @@ function Upload({ token }) {
 
   const totalBalance = totalCredit - totalDebit;
 
-  // Additional metrics from v0
   const monthlySpend = totalDebit;
   const averageSpend = transactions.length > 0 ? totalDebit / Math.ceil(totalDebit / 3800) : 3800;
   const safeToSpend = Math.max(0, totalBalance * 0.2);
 
-  // --- MONTHLY DATA (Revenue Flow) ---
+  // --- MONTHLY DATA ---
   const monthlyData = Object.values(transactions.reduce((acc, t) => {
     const amt = parseFloat(t.amount !== undefined ? t.amount : t.Amount);
     const dateStr = t.date || t.Date || '';
@@ -91,7 +90,7 @@ function Upload({ token }) {
     return acc;
   }, {}));
 
-  // --- CATEGORY DATA (with 'Other') ---
+  // --- CATEGORY DATA ---
   const CATEGORIES = {
     Food: ['zomato', 'swiggy', 'restaurant', 'cafe'],
     Transport: ['uber', 'ola', 'metro', 'fuel', 'rail'],
@@ -118,16 +117,16 @@ function Upload({ token }) {
 
   return (
     <div className="w-full max-w-6xl mx-auto pb-10">
-      {/* Header & Upload – v0 style */}
+      {/* Header & Upload */}
       <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <h2 className="text-2xl font-bold text-zinc-900 tracking-tight">My Dashboard</h2>
+        <h2 className="text-2xl font-bold text-white tracking-tight">My Dashboard</h2>
         <form onSubmit={handleUpload} className="flex items-center gap-3 md:flex-1 md:justify-end">
           <input
             type="file"
             accept=".csv"
             onChange={handleFileChange}
             required
-            className="block flex-1 md:flex-none text-sm text-zinc-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border file:border-slate-200 file:text-sm file:font-medium file:bg-white file:text-zinc-700 hover:file:bg-slate-50 cursor-pointer transition-colors"
+            className="block flex-1 md:flex-none text-sm text-zinc-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border file:border-zinc-700 file:text-sm file:font-medium file:bg-zinc-800 file:text-zinc-200 hover:file:bg-zinc-700 cursor-pointer transition-colors"
           />
           <button
             type="submit"
@@ -141,48 +140,48 @@ function Upload({ token }) {
 
       {transactions.length > 0 && (
         <div className="space-y-6">
-          {/* ROW 1: Four Cards – v0 style */}
+          {/* ROW 1: Four Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
-              <p className="text-zinc-500 text-sm font-medium mb-2">Total Cash</p>
-              <h3 className="text-3xl font-semibold text-zinc-900">
+            <div className="bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
+              <p className="text-zinc-400 text-sm font-medium mb-2">Total Cash</p>
+              <h3 className="text-3xl font-semibold text-white">
                 {formatCurrency(totalBalance)}
               </h3>
             </div>
-            <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
-              <p className="text-zinc-500 text-sm font-medium mb-2">Monthly Spend</p>
-              <h3 className="text-3xl font-semibold text-rose-600">
+            <div className="bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
+              <p className="text-zinc-400 text-sm font-medium mb-2">Monthly Spend</p>
+              <h3 className="text-3xl font-semibold text-rose-400">
                 {monthlySpend === 0 ? '₹0.00' : `-${formatCurrency(monthlySpend)}`}
               </h3>
             </div>
-            <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
-              <p className="text-zinc-500 text-sm font-medium mb-2">Average Spend</p>
+            <div className="bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
+              <p className="text-zinc-400 text-sm font-medium mb-2">Average Spend</p>
               <div className="flex items-end justify-between">
-                <h3 className="text-3xl font-semibold text-zinc-900">
+                <h3 className="text-3xl font-semibold text-white">
                   {formatCurrency(averageSpend)}
                 </h3>
-                <span className="text-teal-600 text-xs font-semibold">↑ 12%</span>
+                <span className="text-teal-400 text-xs font-semibold">↑ 12%</span>
               </div>
-              <p className="text-zinc-400 text-xs mt-1">/ month</p>
+              <p className="text-zinc-500 text-xs mt-1">/ month</p>
             </div>
-            <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
-              <p className="text-zinc-500 text-sm font-medium mb-2">Safe to Spend</p>
-              <h3 className="text-3xl font-semibold text-teal-600">
+            <div className="bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
+              <p className="text-zinc-400 text-sm font-medium mb-2">Safe to Spend</p>
+              <h3 className="text-3xl font-semibold text-teal-400">
                 {formatCurrency(safeToSpend)}
               </h3>
             </div>
           </div>
 
-          {/* ROW 2: Charts – v0 style containers with our data */}
+          {/* ROW 2: Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Revenue Flow (Monthly Bar Chart) */}
-            <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
-              <h3 className="text-lg font-bold text-zinc-900 mb-6">Revenue Flow</h3>
-              <div className="h-80 w-full bg-slate-50 border border-slate-200 rounded-xl p-4">
+            {/* Revenue Flow */}
+            <div className="bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
+              <h3 className="text-lg font-bold text-white mb-6">Revenue Flow</h3>
+              <div className="h-80 w-full bg-zinc-900 border border-zinc-700 rounded-xl p-4">
                 {transactions.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={monthlyData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                      <CartesianGrid stroke="none" />
+                      <CartesianGrid stroke="#3f3f46" strokeDasharray="3 3" />
                       <XAxis
                         dataKey="name"
                         stroke="#a1a1aa"
@@ -199,14 +198,13 @@ function Upload({ token }) {
                       <RechartsTooltip
                         cursor={{ fill: 'transparent' }}
                         contentStyle={{
-                          backgroundColor: '#ffffff',
-                          borderColor: '#e4e4e7',
-                          color: '#18181b',
+                          backgroundColor: '#27272a',
+                          borderColor: '#3f3f46',
+                          color: '#f4f4f5',
                           borderRadius: '0.75rem',
                         }}
                       />
                       <Bar dataKey="Income" fill="#c084fc" radius={[6, 6, 0, 0]} barSize={30} />
-                      {/* Optionally add Expense bar if you want both */}
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
@@ -215,10 +213,10 @@ function Upload({ token }) {
               </div>
             </div>
 
-            {/* Expense Split (Donut) */}
-            <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
-              <h3 className="text-lg font-bold text-zinc-900 mb-6">Expense Split</h3>
-              <div className="h-80 w-full bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center">
+            {/* Expense Split */}
+            <div className="bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
+              <h3 className="text-lg font-bold text-white mb-6">Expense Split</h3>
+              <div className="h-80 w-full bg-zinc-900 border border-zinc-700 rounded-xl flex items-center justify-center">
                 {transactions.length > 0 ? (
                   <div className="flex items-center justify-between w-full h-full p-6">
                     <div className="w-1/2 h-48 flex items-center justify-center">
@@ -241,8 +239,8 @@ function Upload({ token }) {
                           <RechartsTooltip
                             formatter={(value) => `₹${value.toLocaleString()}`}
                             contentStyle={{
-                              backgroundColor: '#ffffff',
-                              borderColor: '#e4e4e7',
+                              backgroundColor: '#27272a',
+                              borderColor: '#3f3f46',
                               borderRadius: '0.75rem',
                             }}
                           />
@@ -259,9 +257,9 @@ function Upload({ token }) {
                                 className="w-3 h-3 rounded-full"
                                 style={{ backgroundColor: PIE_COLORS[idx % PIE_COLORS.length] }}
                               />
-                              <span className="text-zinc-600 text-sm font-medium">{cat.name}</span>
+                              <span className="text-zinc-300 text-sm font-medium">{cat.name}</span>
                             </div>
-                            <span className="text-zinc-900 text-sm font-semibold">{percentage}%</span>
+                            <span className="text-white text-sm font-semibold">{percentage}%</span>
                           </div>
                         );
                       })}
@@ -274,48 +272,48 @@ function Upload({ token }) {
             </div>
           </div>
 
-          {/* ROW 3: AI Auditor & Recent Transactions – our logic with v0 styling */}
+          {/* ROW 3: AI Auditor & Recent Transactions */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* AI Review Panel */}
-            <div className="lg:col-span-1 bg-white border border-slate-200 p-6 rounded-xl shadow-sm relative overflow-hidden flex flex-col">
-              <h3 className="text-lg font-bold text-zinc-900 mb-2">Transactions to review</h3>
-              <p className="text-sm text-zinc-500 mb-6">Unlock Gemini intelligence to flag suspicious spending.</p>
+            <div className="lg:col-span-1 bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm relative overflow-hidden flex flex-col">
+              <h3 className="text-lg font-bold text-white mb-2">Transactions to review</h3>
+              <p className="text-sm text-zinc-400 mb-6">Unlock Gemini intelligence to flag suspicious spending.</p>
               <button
                 onClick={runAIAnalysis}
                 disabled={analyzing}
-                className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-zinc-800 font-medium rounded-lg border border-slate-200 transition-colors mb-6 disabled:opacity-50"
+                className="w-full py-3 bg-zinc-700 hover:bg-zinc-600 text-white font-medium rounded-lg border border-zinc-600 transition-colors mb-6 disabled:opacity-50"
               >
                 {analyzing ? 'Analyzing...' : 'Unlock Intelligence'}
               </button>
               <div className="flex-1 overflow-y-auto pr-2 space-y-4 max-h-[300px]">
                 {aiQuestions.map((q, idx) => (
-                  <div key={idx} className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                  <div key={idx} className="bg-zinc-900 p-4 rounded-lg border border-zinc-700">
                     <div className="flex justify-between items-start mb-2">
-                      <strong className="text-zinc-700 text-sm">{q.description}</strong>
-                      <span className="text-rose-500 text-sm font-semibold">₹{q.amount}</span>
+                      <strong className="text-zinc-200 text-sm">{q.description}</strong>
+                      <span className="text-rose-400 text-sm font-semibold">₹{q.amount}</span>
                     </div>
-                    <p className="text-zinc-500 text-xs italic">"{q.question}"</p>
+                    <p className="text-zinc-400 text-xs italic">"{q.question}"</p>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Recent Transactions Table */}
-            <div className="lg:col-span-2 bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
+            <div className="lg:col-span-2 bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-bold text-zinc-900">Recent transactions</h3>
+                <h3 className="text-lg font-bold text-white">Recent transactions</h3>
               </div>
               <div className="overflow-x-auto max-h-[400px]">
                 <table className="w-full text-left">
-                  <tbody className="divide-y divide-slate-200">
+                  <tbody className="divide-y divide-zinc-700">
                     {transactions.map((t, idx) => {
                       const amt = parseFloat(t.amount !== undefined ? t.amount : t.Amount);
                       const isNegative = amt < 0;
                       return (
-                        <tr key={idx} className="hover:bg-slate-50 transition-colors">
-                          <td className="py-4 pr-4 whitespace-nowrap text-sm text-zinc-500">{t.date || t.Date}</td>
-                          <td className="py-4 px-4 text-sm text-zinc-800 font-medium">{t.description || t.Description}</td>
-                          <td className={`py-4 pl-4 whitespace-nowrap text-sm font-semibold text-right ${isNegative ? 'text-rose-600' : 'text-emerald-600'}`}>
+                        <tr key={idx} className="hover:bg-zinc-700/50 transition-colors">
+                          <td className="py-4 pr-4 whitespace-nowrap text-sm text-zinc-400">{t.date || t.Date}</td>
+                          <td className="py-4 px-4 text-sm text-zinc-200 font-medium">{t.description || t.Description}</td>
+                          <td className={`py-4 pl-4 whitespace-nowrap text-sm font-semibold text-right ${isNegative ? 'text-rose-400' : 'text-emerald-400'}`}>
                             {isNegative ? `-₹${Math.abs(amt)}` : `+₹${amt}`}
                           </td>
                         </tr>

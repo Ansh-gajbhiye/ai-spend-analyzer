@@ -23,7 +23,8 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-zinc-900 font-sans flex">
+    // Dark background, light text
+    <div className="min-h-screen bg-zinc-900 text-white font-sans flex">
       {!token ? (
         <div className="flex-1 flex items-center justify-center">
           <Login onLoginSuccess={handleLoginSuccess} />
