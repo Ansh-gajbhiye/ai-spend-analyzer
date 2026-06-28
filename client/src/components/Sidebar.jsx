@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
 // SVG icons – use currentColor so they adapt to parent text color
 const Icons = {
@@ -37,14 +38,12 @@ const Icons = {
 
 export default function Sidebar({ collapsed, onToggle }) {
   const menuItems = [
-    { label: 'Dashboard', icon: Icons.Dashboard },
-    { label: 'Transactions', icon: Icons.Transactions },
-    { label: 'AI Auditor', icon: Icons.AI },
-    { label: 'Docs', icon: Icons.Docs },
-    { label: 'Settings', icon: Icons.Settings },
+    { label: 'Dashboard', icon: Icons.Dashboard, to: '/' },
+    { label: 'Transactions', icon: Icons.Transactions, to: '/transactions' },
+    { label: 'AI Auditor', icon: Icons.AI, to: '/ai-auditor' },
+    { label: 'Docs', icon: Icons.Docs, to: '/docs' },
+    { label: 'Settings', icon: Icons.Settings, to: '/settings' },
   ];
-
-  const activeLabel = 'Dashboard';
 
   return (
     <aside
@@ -83,26 +82,28 @@ export default function Sidebar({ collapsed, onToggle }) {
         </div>
       )}
 
-      {/* Menu items */}
+      {/* Navigation Links – using NavLink */}
       <nav className="flex-1 overflow-y-auto px-3 py-4">
         <div className="space-y-1">
           {menuItems.map((item) => {
-            const isActive = item.label === activeLabel;
             const IconComponent = item.icon;
             return (
-              <button
+              <NavLink
                 key={item.label}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
-                  isActive
-                    ? 'bg-zinc-800 text-white font-medium'
-                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                }`}
+                to={item.to}
+                className={({ isActive }) =>
+                  `w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
+                    isActive
+                      ? 'bg-zinc-800 text-white font-medium'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                  }`
+                }
               >
                 <span className="text-zinc-400">
                   <IconComponent />
                 </span>
                 {!collapsed && <span className="text-sm">{item.label}</span>}
-              </button>
+              </NavLink>
             );
           })}
         </div>
