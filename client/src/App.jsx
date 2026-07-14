@@ -1,70 +1,105 @@
-  import { useState } from 'react'
-  import Login from './Login'
-  import Upload from './Upload'
-  import './index.css'
+import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Login from './Login';
+import Sidebar from './components/Sidebar';
+import Dashboard from './pages/Dashboard';
+import Transactions from './pages/Transactions';
+import AIAuditor from './pages/AIAuditor';
+import Docs from './pages/Docs';
+import Settings from './pages/Settings';
+import './index.css';
 
-  function App() {
-    const [token, setToken] = useState(localStorage.getItem('token') || '')
+function App() {
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [transactions, setTransactions] = useState([]);
+  const [aiQuestions, setAiQuestions] = useState([]);
+  const [analyzing, setAnalyzing] = useState(false);
 
-    const handleLoginSuccess = (newToken) => {
-      localStorage.setItem('token', newToken) 
-      setToken(newToken) 
+  const handleLoginSuccess = (newToken) => {
+    localStorage.setItem('token', newToken);
+    setToken(newToken);
+  };
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
+  // Function to run AI analysis – uses the current transactions
+  const runAIAnalysis = async () => {
+    if (!transactions.length) return;
+    setAnalyzing(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/analyze`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ transactions }),
+      });
+      const result = await response.json();
+      setAiQuestions(result.analysis);
+    } catch (error) {
+      console.error('AI Analysis error:', error);
+      alert('AI failed to analyze. Check your backend console!');
+    } finally {
+      setAnalyzing(false);
     }
+  };
 
-    const handleLogout = () => {
-      localStorage.removeItem('token')
-      setToken('')
-    }
-
+  if (!token) {
     return (
-      // The main wrapper is now a deep dark navy (slate-950)
-      <div className="min-h-screen bg-slate-950 text-slate-300 font-sans flex">
-        {!token ? (
-          <div className="flex-1 flex items-center justify-center">
-            <Login onLoginSuccess={handleLoginSuccess} />
-          </div>
-        ) : (
-          <>
-            {/* Sidebar Navigation */}
-            <aside className="w-64 bg-slate-950 border-r border-slate-800 flex flex-col justify-between hidden md:flex">
-              <div className="p-6">
-                <h1 className="text-2xl font-bold text-white mb-10 tracking-tight">
-                  AI-Spend<span className="text-blue-500"> Analyzer</span>
-                </h1>
-                
-                <nav className="space-y-3">
-                  {/* Active Link */}
-                  <div className="flex items-center gap-3 bg-blue-500/10 text-blue-400 px-4 py-3 rounded-xl font-semibold cursor-pointer">
-                    <span>📊</span> Dashboard
-                  </div>
-                  {/* Inactive Links */}
-                  <div className="flex items-center gap-3 text-slate-400 hover:text-slate-200 px-4 py-3 rounded-xl cursor-pointer transition-colors">
-                    <span>💳</span> Transactions
-                  </div>
-                  <div className="flex items-center gap-3 text-slate-400 hover:text-slate-200 px-4 py-3 rounded-xl cursor-pointer transition-colors">
-                    <span>🤖</span> AI Auditor
-                  </div>
-                </nav>
-              </div>
-
-              <div className="p-6">
-                <button 
-                  onClick={handleLogout} 
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-900 rounded-xl transition-colors font-medium border border-transparent hover:border-slate-800"
-                >
-                  Logout
-                </button>
-              </div>
-            </aside>
-
-            {/* Main Content Area */}
-            <main className="flex-1 p-8 md:p-10 overflow-y-auto h-screen">
-              <Upload token={token} />
-            </main>
-          </>
-        )}
+      <div className="min-h-screen bg-zinc-900 text-white font-sans flex items-center justify-center">
+        <Login onLoginSuccess={handleLoginSuccess} />
       </div>
-    )
+    );
   }
 
-  export default App
+  return (
+    <BrowserRouter>
+      <div className="min-h-screen bg-zinc-900 text-white font-sans flex">
+        <Sidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+        <main
+          className={`flex-1 p-8 md:p-10 overflow-y-auto h-screen transition-all duration-300 ${
+            sidebarCollapsed ? 'ml-20' : 'ml-64'
+          }`}
+        >
+          <div className="max-w-6xl mx-auto">
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Dashboard
+                    token={token}
+                    transactions={transactions}
+                    setTransactions={setTransactions}
+                  />
+                }
+              />
+              <Route
+                path="/transactions"
+                element={<Transactions transactions={transactions} />}
+              />
+              <Route
+                path="/ai-auditor"
+                element={
+                  <AIAuditor
+                    transactions={transactions}
+                    aiQuestions={aiQuestions}
+                    analyzing={analyzing}
+                    runAIAnalysis={runAIAnalysis}
+                  />
+                }
+              />
+              <Route path="/docs" element={<Docs />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </div>
+        </main>
+      </div>
+    </BrowserRouter>
+  );
+}
+
+export default App;

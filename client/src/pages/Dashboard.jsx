@@ -4,12 +4,9 @@ import {
   PieChart, Pie, Cell
 } from 'recharts';
 
-function Upload({ token }) {
+export default function Dashboard({ token, transactions, setTransactions }) {
   const [file, setFile] = useState(null);
-  const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [aiQuestions, setAiQuestions] = useState([]);
-  const [analyzing, setAnalyzing] = useState(false);
 
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
@@ -28,38 +25,15 @@ function Upload({ token }) {
         body: formData,
       });
       const result = await response.json();
-
       if (response.ok) {
         setTransactions(result.data || []);
-        setAiQuestions([]);
       } else {
-        alert("Upload failed: " + result.error);
+        alert('Upload failed: ' + result.error);
       }
     } catch (error) {
-      console.error("Upload error:", error);
+      console.error('Upload error:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const runAIAnalysis = async () => {
-    setAnalyzing(true);
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/analyze`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ transactions }),
-      });
-      const result = await response.json();
-      setAiQuestions(result.analysis);
-    } catch (error) {
-      console.error("AI Analysis error:", error);
-      alert("AI failed to analyze. Check your backend console!");
-    } finally {
-      setAnalyzing(false);
     }
   };
 
@@ -73,7 +47,6 @@ function Upload({ token }) {
     .reduce((sum, t) => sum + parseFloat(t.amount || t.Amount), 0);
 
   const totalBalance = totalCredit - totalDebit;
-
   const monthlySpend = totalDebit;
   const averageSpend = transactions.length > 0 ? totalDebit / Math.ceil(totalDebit / 3800) : 3800;
   const safeToSpend = Math.max(0, totalBalance * 0.2);
@@ -90,7 +63,7 @@ function Upload({ token }) {
     return acc;
   }, {}));
 
-  // --- CATEGORY DATA ---
+  // --- CATEGORIES ---
   const CATEGORIES = {
     Food: ['zomato', 'swiggy', 'restaurant', 'cafe'],
     Transport: ['uber', 'ola', 'metro', 'fuel', 'rail'],
@@ -140,13 +113,11 @@ function Upload({ token }) {
 
       {transactions.length > 0 && (
         <div className="space-y-6">
-          {/* ROW 1: Four Cards */}
+          {/* Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
               <p className="text-zinc-400 text-sm font-medium mb-2">Total Cash</p>
-              <h3 className="text-3xl font-semibold text-white">
-                {formatCurrency(totalBalance)}
-              </h3>
+              <h3 className="text-3xl font-semibold text-white">{formatCurrency(totalBalance)}</h3>
             </div>
             <div className="bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
               <p className="text-zinc-400 text-sm font-medium mb-2">Monthly Spend</p>
@@ -157,24 +128,19 @@ function Upload({ token }) {
             <div className="bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
               <p className="text-zinc-400 text-sm font-medium mb-2">Average Spend</p>
               <div className="flex items-end justify-between">
-                <h3 className="text-3xl font-semibold text-white">
-                  {formatCurrency(averageSpend)}
-                </h3>
+                <h3 className="text-3xl font-semibold text-white">{formatCurrency(averageSpend)}</h3>
                 <span className="text-teal-400 text-xs font-semibold">↑ 12%</span>
               </div>
               <p className="text-zinc-500 text-xs mt-1">/ month</p>
             </div>
             <div className="bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
               <p className="text-zinc-400 text-sm font-medium mb-2">Safe to Spend</p>
-              <h3 className="text-3xl font-semibold text-teal-400">
-                {formatCurrency(safeToSpend)}
-              </h3>
+              <h3 className="text-3xl font-semibold text-teal-400">{formatCurrency(safeToSpend)}</h3>
             </div>
           </div>
 
-          {/* ROW 2: Charts */}
+          {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Revenue Flow */}
             <div className="bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
               <h3 className="text-lg font-bold text-white mb-6">Revenue Flow</h3>
               <div className="h-80 w-full bg-zinc-900 border border-zinc-700 rounded-xl p-4">
@@ -182,28 +148,9 @@ function Upload({ token }) {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={monthlyData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                       <CartesianGrid stroke="#3f3f46" strokeDasharray="3 3" />
-                      <XAxis
-                        dataKey="name"
-                        stroke="#a1a1aa"
-                        tick={{ fill: '#a1a1aa', fontSize: 12 }}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <YAxis
-                        stroke="#a1a1aa"
-                        tick={{ fill: '#a1a1aa', fontSize: 12 }}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <RechartsTooltip
-                        cursor={{ fill: 'transparent' }}
-                        contentStyle={{
-                          backgroundColor: '#27272a',
-                          borderColor: '#3f3f46',
-                          color: '#f4f4f5',
-                          borderRadius: '0.75rem',
-                        }}
-                      />
+                      <XAxis dataKey="name" stroke="#a1a1aa" tick={{ fill: '#a1a1aa', fontSize: 12 }} axisLine={false} tickLine={false} />
+                      <YAxis stroke="#a1a1aa" tick={{ fill: '#a1a1aa', fontSize: 12 }} axisLine={false} tickLine={false} />
+                      <RechartsTooltip cursor={{ fill: 'transparent' }} contentStyle={{ backgroundColor: '#27272a', borderColor: '#3f3f46', color: '#f4f4f5', borderRadius: '0.75rem' }} />
                       <Bar dataKey="Income" fill="#c084fc" radius={[6, 6, 0, 0]} barSize={30} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -213,7 +160,6 @@ function Upload({ token }) {
               </div>
             </div>
 
-            {/* Expense Split */}
             <div className="bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
               <h3 className="text-lg font-bold text-white mb-6">Expense Split</h3>
               <div className="h-80 w-full bg-zinc-900 border border-zinc-700 rounded-xl flex items-center justify-center">
@@ -222,28 +168,12 @@ function Upload({ token }) {
                     <div className="w-1/2 h-48 flex items-center justify-center">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
-                          <Pie
-                            data={categoryData}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={50}
-                            outerRadius={75}
-                            paddingAngle={4}
-                            dataKey="value"
-                            stroke="none"
-                          >
+                          <Pie data={categoryData} cx="50%" cy="50%" innerRadius={50} outerRadius={75} paddingAngle={4} dataKey="value" stroke="none">
                             {categoryData.map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                             ))}
                           </Pie>
-                          <RechartsTooltip
-                            formatter={(value) => `₹${value.toLocaleString()}`}
-                            contentStyle={{
-                              backgroundColor: '#27272a',
-                              borderColor: '#3f3f46',
-                              borderRadius: '0.75rem',
-                            }}
-                          />
+                          <RechartsTooltip formatter={(value) => `₹${value.toLocaleString()}`} contentStyle={{ backgroundColor: '#27272a', borderColor: '#3f3f46', borderRadius: '0.75rem' }} />
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
@@ -253,10 +183,7 @@ function Upload({ token }) {
                         return (
                           <div key={idx} className="flex justify-between items-center">
                             <div className="flex items-center gap-2">
-                              <div
-                                className="w-3 h-3 rounded-full"
-                                style={{ backgroundColor: PIE_COLORS[idx % PIE_COLORS.length] }}
-                              />
+                              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: PIE_COLORS[idx % PIE_COLORS.length] }} />
                               <span className="text-zinc-300 text-sm font-medium">{cat.name}</span>
                             </div>
                             <span className="text-white text-sm font-semibold">{percentage}%</span>
@@ -271,63 +198,8 @@ function Upload({ token }) {
               </div>
             </div>
           </div>
-
-          {/* ROW 3: AI Auditor & Recent Transactions */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* AI Review Panel */}
-            <div className="lg:col-span-1 bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm relative overflow-hidden flex flex-col">
-              <h3 className="text-lg font-bold text-white mb-2">Transactions to review</h3>
-              <p className="text-sm text-zinc-400 mb-6">Unlock Gemini intelligence to flag suspicious spending.</p>
-              <button
-                onClick={runAIAnalysis}
-                disabled={analyzing}
-                className="w-full py-3 bg-zinc-700 hover:bg-zinc-600 text-white font-medium rounded-lg border border-zinc-600 transition-colors mb-6 disabled:opacity-50"
-              >
-                {analyzing ? 'Analyzing...' : 'Unlock Intelligence'}
-              </button>
-              <div className="flex-1 overflow-y-auto pr-2 space-y-4 max-h-[300px]">
-                {aiQuestions.map((q, idx) => (
-                  <div key={idx} className="bg-zinc-900 p-4 rounded-lg border border-zinc-700">
-                    <div className="flex justify-between items-start mb-2">
-                      <strong className="text-zinc-200 text-sm">{q.description}</strong>
-                      <span className="text-rose-400 text-sm font-semibold">₹{q.amount}</span>
-                    </div>
-                    <p className="text-zinc-400 text-xs italic">"{q.question}"</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Recent Transactions Table */}
-            <div className="lg:col-span-2 bg-zinc-800 border border-zinc-700 p-6 rounded-xl shadow-sm">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-bold text-white">Recent transactions</h3>
-              </div>
-              <div className="overflow-x-auto max-h-[400px]">
-                <table className="w-full text-left">
-                  <tbody className="divide-y divide-zinc-700">
-                    {transactions.map((t, idx) => {
-                      const amt = parseFloat(t.amount !== undefined ? t.amount : t.Amount);
-                      const isNegative = amt < 0;
-                      return (
-                        <tr key={idx} className="hover:bg-zinc-700/50 transition-colors">
-                          <td className="py-4 pr-4 whitespace-nowrap text-sm text-zinc-400">{t.date || t.Date}</td>
-                          <td className="py-4 px-4 text-sm text-zinc-200 font-medium">{t.description || t.Description}</td>
-                          <td className={`py-4 pl-4 whitespace-nowrap text-sm font-semibold text-right ${isNegative ? 'text-rose-400' : 'text-emerald-400'}`}>
-                            {isNegative ? `-₹${Math.abs(amt)}` : `+₹${amt}`}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
         </div>
       )}
     </div>
   );
 }
-
-export default Upload;
