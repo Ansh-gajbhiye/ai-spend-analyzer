@@ -10,7 +10,7 @@ function Login({ onLoginSuccess }) {
     setError('')
 
     try {
-     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ function Login({ onLoginSuccess }) {
       const data = await response.json()
 
       if (response.ok) {
-        onLoginSuccess(data.token) 
+        onLoginSuccess(data.token)
       } else {
         setError(data.error || 'Login failed')
       }
@@ -32,38 +32,48 @@ function Login({ onLoginSuccess }) {
 
   return (
     <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-100">
-      <h2 className="text-3xl font-extrabold text-gray-900 mb-6 text-center">Welcome Back</h2>
-      
+      <h2 className="text-3xl font-extrabold text-gray-900 mb-6 text-center">
+        Welcome Back
+      </h2>
+
       {error && (
         <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm font-medium border border-red-100">
           {error}
         </div>
       )}
-      
+
       <form onSubmit={handleLogin} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-          <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Email Address
+          </label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="email"
+            placeholder="you@example.com"
+            className="w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 caret-blue-600 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
           />
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Password
+          </label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="current-password"
+            placeholder="••••••••"
+            className="w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 caret-blue-600 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
           />
         </div>
-        
-        <button 
+
+        <button
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors duration-200"
         >
