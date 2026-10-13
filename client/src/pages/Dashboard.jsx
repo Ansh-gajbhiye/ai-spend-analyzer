@@ -20,10 +20,10 @@ export default function Dashboard({ token, transactions, setTransactions }) {
 
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-        body: formData,
-      });
+  method: 'POST',
+  headers: token ? { Authorization: `Bearer ${token}` } : {},
+  body: formData,
+});
       const result = await response.json();
       if (response.ok) {
         setTransactions(result.data || []);

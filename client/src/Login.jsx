@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 
 function Login({ onLoginSuccess }) {
-  const [email, setEmail] = useState('admin@remarkflow.com')
-  const [password, setPassword] = useState('MySecurePassword123')
+  const navigate = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
   const handleLogin = async (e) => {
@@ -12,9 +14,7 @@ function Login({ onLoginSuccess }) {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       })
 
@@ -22,6 +22,7 @@ function Login({ onLoginSuccess }) {
 
       if (response.ok) {
         onLoginSuccess(data.token)
+        navigate('/')
       } else {
         setError(data.error || 'Login failed')
       }
@@ -29,6 +30,7 @@ function Login({ onLoginSuccess }) {
       setError('Cannot connect to server. Is your backend running?')
     }
   }
+
 
   return (
     <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-100">
@@ -80,6 +82,12 @@ function Login({ onLoginSuccess }) {
           Enter Vault
         </button>
       </form>
+      <Link
+        to="/"
+        className="block text-center text-sm text-gray-500 hover:text-gray-700 mt-4"
+      >
+        Continue as guest
+      </Link>
     </div>
   )
 }
