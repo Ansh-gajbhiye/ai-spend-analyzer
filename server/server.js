@@ -104,61 +104,52 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 //authMiddleware
-app.post('/api/upload', authMiddleware, upload.single('statement'), async (req, res) => {
-    if (!req.file) return res.status(400).json({ error: "No file uploaded." });
-    
-    const results = [];
-    fs.createReadStream(req.file.path)
-        .pipe(csvParser())
-        .on('data', (data) => results.push(data))
-        .on('end', async () => {
-            // Delete the temporary file
-            fs.unlinkSync(req.file.path);
-            
-            try {
-   
-            const formattedTransactions = results.map((row) => {
-                // 1. Clean the Debit and Credit columns (remove commas, handle dashes)
-                const rawDebit = row['Debit'] && row['Debit'] !== '-' ? String(row['Debit']).replace(/,/g, '') : '0';
-                const rawCredit = row['Credit'] && row['Credit'] !== '-' ? String(row['Credit']).replace(/,/g, '') : '0';
+app.post('/api/upload', upload.single('statement'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "No file uploaded." });
 
-                const debitVal = parseFloat(rawDebit);
-                const creditVal = parseFloat(rawCredit);
+  const results = [];
+  fs.createReadStream(req.file.path)
+    .pipe(csvParser())
+    .on('data', (row) => results.push(row))
+    .on('error', () => {
+      fs.unlinkSync(req.file.path);
+      res.status(400).json({ error: "Could not read this file." });
+    })
+    .on('end', () => {
+      fs.unlinkSync(req.file.path);
 
-                // 2. Combine them into a single amount (Negative for out, Positive for in)
-                let finalAmount = 0;
-                if (creditVal > 0) {
-                    finalAmount = creditVal;
-                } else if (debitVal > 0) {
-                    finalAmount = -debitVal;
-                } else {
-                    // Fallback just in case you upload your original test.csv
-                    finalAmount = Number(row.Amount || row.amount || 0);
-                }
+      const formattedTransactions = results.map((row) => {
+        const rawDebit = row['Debit'] && row['Debit'] !== '-' ? String(row['Debit']).replace(/,/g, '') : '0';
+        const rawCredit = row['Credit'] && row['Credit'] !== '-' ? String(row['Credit']).replace(/,/g, '') : '0';
+        const debitVal = parseFloat(rawDebit);
+        const creditVal = parseFloat(rawCredit);
 
-                // 3. Return the exact schema MongoDB expects
-                return {
-                    userId: req.user.id,
-                    date: row['Date'] || row['date'], 
-                    description: row['Particulars'] || row['Description'] || row['description'], 
-                    amount: finalAmount 
-                };
-            });
+        let finalAmount = 0;
+        if (creditVal > 0) finalAmount = creditVal;
+        else if (debitVal > 0) finalAmount = -debitVal;
+        else finalAmount = Number(row.Amount || row.amount || 0);
 
-           
-            await Transaction.insertMany(formattedTransactions);
+        return {
+          date: row['Date'] || row['date'],
+          description: row['Particulars'] || row['Description'] || row['description'],
+          amount: finalAmount,
+        };
+      });
 
-           
-            res.json({ 
-                message: 'Success! Transactions securely saved to your account.', 
-                count: formattedTransactions.length ,
-                data: formattedTransactions
-            });
-            } catch (error) {
-                console.error(error);
-                res.status(500).json({ error: "Failed to save transactions to database." });
-            }
-        });
+      res.json({ count: formattedTransactions.length, data: formattedTransactions });
+    });
+});
+
+app.post('/api/transactions/save', authMiddleware, async (req, res) => {
+  try {
+    const { transactions } = req.body;
+    const docs = transactions.map((t) => ({ ...t, userId: req.user.id }));
+    await Transaction.insertMany(docs);
+    res.json({ message: "Saved!", count: docs.length });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to save." });
+  }
 });
 
 app.post('/api/analyze', async (req, res) => {
